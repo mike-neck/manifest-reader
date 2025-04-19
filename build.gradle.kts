@@ -1,5 +1,6 @@
 plugins {
-    id("java-library")
+    id("java")
+    id("application")
 }
 
 group = "org.example"
@@ -18,15 +19,24 @@ dependencies {
 
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(21))
+        languageVersion = JavaLanguageVersion.of(21)
     }
 }
 
-tasks.test {
-    useJUnitPlatform()
-    javaToolchains {
-        launcherFor {
-            languageVersion.set(JavaLanguageVersion.of(21))
+tasks {
+    test {
+        useJUnitPlatform()
+        javaToolchains {
+            launcherFor {
+                languageVersion = JavaLanguageVersion.of(21)
+            }
         }
     }
+    named<JavaExec>("run").configure {
+        args("src/test/resources/manifests/default.xml")
+    }
+}
+
+application {
+    mainClass = "com.example.AsAnArray"
 }
