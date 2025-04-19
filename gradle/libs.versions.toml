@@ -1,0 +1,9 @@
+[versions]
+jackson-xml-version="2.18.1"
+
+[libraries]
+jackson-xml-dataformat = { group = "com.fasterxml.jackson.dataformat", name = "jackson-dataformat-xml", version.ref = "jackson-xml-version" }
+jackson-xml-woodstox = { group = "com.fasterxml.woodstox", name = "woodstox-core", version = "6.5.0" }
+
+[bundles]
+jackson-xml = ["jackson-xml-dataformat", "jackson-xml-woodstox"]
