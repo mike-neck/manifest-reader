@@ -20,9 +20,9 @@ public class Stax {
       System.exit(1);
     }
     String filename = args[0];
-    Path filePath = Path.of(filename);
+    Path manifestPath = Path.of(filename);
     var elements = new ArrayList<Element>();
-    try (BufferedReader reader = Files.newBufferedReader(filePath)) {
+    try (BufferedReader reader = Files.newBufferedReader(manifestPath)) {
       XMLInputFactory factory = xmlInputFactory();
       XMLEventReader sax = factory.createXMLEventReader(reader);
       Element.Builder elementBuilder = null;
