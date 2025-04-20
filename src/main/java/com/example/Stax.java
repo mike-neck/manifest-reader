@@ -49,6 +49,11 @@ public record Stax(@NotNull Path manifestPath) {
         for (int i = includeElements.size() - 1; i >= 0; i--) {
           deque.addFirst(includeElements.get(i));
         }
+      } else if (element instanceof Element.RemoveProject(String name, String path)) {
+        projects.removeIf(
+            project ->
+                    name.equals(project.name())
+                    && (path == null || path.equals(project.path())));
       }
     }
     return new Manifest(List.copyOf(projects));
