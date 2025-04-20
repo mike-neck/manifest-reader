@@ -25,16 +25,16 @@ public record Stax(@NotNull Path manifestPath) {
     String filename = args[0];
     Path manifestPath = Path.of(filename);
     Stax stax = new Stax(manifestPath);
-    List<Element> elements = readManifest(stax);
+    List<Element> elements = stax.readManifest();
     for (Element element : elements) {
       System.out.println(element);
     }
   }
 
-  private static @NotNull List<Element> readManifest(Stax stax)
-      throws IOException, XMLStreamException {
+  @NotNull
+  List<Element> readManifest() throws IOException, XMLStreamException {
     var elements = new ArrayList<Element>();
-    try (BufferedReader reader = Files.newBufferedReader(stax.manifestPath())) {
+    try (BufferedReader reader = Files.newBufferedReader(manifestPath())) {
       XMLInputFactory factory = xmlInputFactory();
       XMLEventReader sax = factory.createXMLEventReader(reader);
       Element.Builder elementBuilder = null;
