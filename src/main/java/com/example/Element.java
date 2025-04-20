@@ -100,7 +100,7 @@ public sealed interface Element {
   record DefaultBuilder(@NotNull @Override StartElement element) implements Builder {
     @Override
     public @NotNull Element build() {
-      return new Default(mustAttr("name"), mustAttr("value"));
+      return new Default(mustAttr("remote"), mustAttr("revision"));
     }
   }
 
@@ -175,7 +175,7 @@ public sealed interface Element {
 
   record Remote(@NotNull String name, @NotNull String fetch) implements Element {}
 
-  record Default(@NotNull String name, @NotNull String value) implements Element {}
+  record Default(@NotNull String remote, @NotNull String revision) implements Element {}
 
   record Include(@NotNull String name) implements Element {}
 

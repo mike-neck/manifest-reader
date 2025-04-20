@@ -4,7 +4,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.List;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventReader;
@@ -25,16 +27,31 @@ public record Stax(@NotNull Path manifestPath) {
     String filename = args[0];
     Path manifestPath = Path.of(filename);
     Stax stax = new Stax(manifestPath);
-    List<Element> elements = stax.readManifest();
-    for (Element element : elements) {
+    Manifest manifest = stax.readManifest();
+    for (Element.Project element : manifest.projects()) {
       System.out.println(element);
     }
   }
 
   @NotNull
-  List<Element> readManifest() throws IOException, XMLStreamException {
+  Manifest readManifest() throws IOException, XMLStreamException {
     Path manifestPath = manifestPath();
-    return readElements(manifestPath);
+    List<Element> elements = readElements(manifestPath);
+    Deque<Element> deque = new ArrayDeque<>(elements);
+    List<Element.Project> projects = new ArrayList<>();
+    while (!deque.isEmpty()) {
+      Element element = deque.poll();
+      if (element instanceof Element.Project project) {
+        projects.add(project);
+      } else if (element instanceof Element.Include(String name)) {
+        Path inclusion = manifestPath.resolveSibling(name);
+        List<Element> includeElements = readElements(inclusion);
+        for (int i = includeElements.size() - 1; i >= 0; i--) {
+          deque.addFirst(includeElements.get(i));
+        }
+      }
+    }
+    return new Manifest(List.copyOf(projects));
   }
 
   private static @NotNull List<Element> readElements(@NotNull Path manifestPath)
