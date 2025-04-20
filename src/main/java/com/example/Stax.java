@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.List;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
@@ -14,9 +15,7 @@ import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 import org.jetbrains.annotations.NotNull;
 
-public record Stax(
-        @NotNull Path manifestPath
-) {
+public record Stax(@NotNull Path manifestPath) {
 
   public static void main(String[] args) throws IOException, XMLStreamException {
     if (args.length < 1) {
@@ -26,6 +25,14 @@ public record Stax(
     String filename = args[0];
     Path manifestPath = Path.of(filename);
     Stax stax = new Stax(manifestPath);
+    List<Element> elements = readManifest(stax);
+    for (Element element : elements) {
+      System.out.println(element);
+    }
+  }
+
+  private static @NotNull List<Element> readManifest(Stax stax)
+      throws IOException, XMLStreamException {
     var elements = new ArrayList<Element>();
     try (BufferedReader reader = Files.newBufferedReader(stax.manifestPath())) {
       XMLInputFactory factory = xmlInputFactory();
@@ -67,9 +74,7 @@ public record Stax(
         }
       }
     }
-    for (Element element : elements) {
-      System.out.println(element);
-    }
+    return elements;
   }
 
   private static XMLInputFactory xmlInputFactory() {
