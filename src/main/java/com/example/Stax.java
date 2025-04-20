@@ -33,8 +33,14 @@ public record Stax(@NotNull Path manifestPath) {
 
   @NotNull
   List<Element> readManifest() throws IOException, XMLStreamException {
+    Path manifestPath = manifestPath();
+    return readElements(manifestPath);
+  }
+
+  private static @NotNull List<Element> readElements(@NotNull Path manifestPath)
+      throws IOException, XMLStreamException {
     var elements = new ArrayList<Element>();
-    try (BufferedReader reader = Files.newBufferedReader(manifestPath())) {
+    try (BufferedReader reader = Files.newBufferedReader(manifestPath)) {
       XMLInputFactory factory = xmlInputFactory();
       XMLEventReader sax = factory.createXMLEventReader(reader);
       Element.Builder elementBuilder = null;
