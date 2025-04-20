@@ -38,5 +38,5 @@ tasks {
 }
 
 application {
-    mainClass = "com.example.AsAnArray"
+    mainClass = "com.example.Stax"
 }

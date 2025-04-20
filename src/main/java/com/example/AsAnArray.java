@@ -1,7 +1,6 @@
 package com.example;
 
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.TreeNode;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.fasterxml.jackson.dataformat.xml.deser.FromXmlParser;
@@ -23,7 +22,7 @@ public class AsAnArray {
         }
         String filename = args[0];
         Path filePath = Path.of(filename);
-        var elements = new ArrayList<Element>();
+        var elements = new ArrayList<JacksonElement>();
         XmlMapper mapper = new XmlMapper();
         try (BufferedReader reader = Files.newBufferedReader(filePath)) {
             JsonParser parser = mapper.getFactory().createParser(reader);
@@ -35,7 +34,7 @@ public class AsAnArray {
                     String name = stax.getLocalName();
           System.out.println("[debug] " + name);
                     JsonNode node = mapper.readTree(parser);
-                    elements.add(new Element(name, node));
+                    elements.add(new JacksonElement(name, node));
                     JsonParser p = mapper.getFactory().createParser(reader);
                     stax = ((FromXmlParser) p).getStaxReader();
                     for (int i = 0; i < elements.size(); i++) {
@@ -44,7 +43,7 @@ public class AsAnArray {
                 }
             }
         }
-        for (Element element : elements) {
+        for (JacksonElement element : elements) {
             System.out.println("---");
             System.out.println(element.name());
             System.out.println(element.contents());
@@ -52,7 +51,7 @@ public class AsAnArray {
     }
 }
 
-record Element(@NotNull String name, @NotNull JsonNode contents) {}
+record JacksonElement(@NotNull String name, @NotNull JsonNode contents) {}
 
 class CachedReader extends Reader {
 
