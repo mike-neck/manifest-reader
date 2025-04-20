@@ -12,8 +12,12 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.EndElement;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
+import org.jetbrains.annotations.NotNull;
 
-public class Stax {
+public record Stax(
+        @NotNull Path manifestPath
+) {
+
   public static void main(String[] args) throws IOException, XMLStreamException {
     if (args.length < 1) {
       System.err.println("Usage: java -jar <jar-file> <input-file>");
@@ -21,8 +25,9 @@ public class Stax {
     }
     String filename = args[0];
     Path manifestPath = Path.of(filename);
+    Stax stax = new Stax(manifestPath);
     var elements = new ArrayList<Element>();
-    try (BufferedReader reader = Files.newBufferedReader(manifestPath)) {
+    try (BufferedReader reader = Files.newBufferedReader(stax.manifestPath())) {
       XMLInputFactory factory = xmlInputFactory();
       XMLEventReader sax = factory.createXMLEventReader(reader);
       Element.Builder elementBuilder = null;
