@@ -36,7 +36,6 @@ public class Stax {
             continue;
           }
           if (elementBuilder instanceof Element.ProjectBuilder parent) {
-            System.out.printf("[DEBUG] nested: %s[%s]%n", name,  parent.getClass().getSimpleName());
             elementBuilder = Element.builder(name, startElement, parent);
           } else {
             elementBuilder = Element.builder(name, startElement);
