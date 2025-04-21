@@ -114,7 +114,12 @@ public sealed interface Element {
   record SubManifestBuilder(@NotNull @Override StartElement element) implements Builder {
     @Override
     public @NotNull Element build() {
-      return new SubManifest(mustAttr("path"));
+      return new SubManifest(
+              mustAttr("name"),
+              mustAttr("manifest-name"),
+              mustAttr("path"),
+              attr("revision")
+      );
     }
   }
 
@@ -150,7 +155,7 @@ public sealed interface Element {
       case "remote" -> new RemoteBuilder(element);
       case "default" -> new DefaultBuilder(element);
       case "include" -> new IncludeBuilder(element);
-      case "sub-manifest" -> new SubManifestBuilder(element);
+      case "submanifest" -> new SubManifestBuilder(element);
       case "linkfile" -> new LinkfileBuilder(element, parent);
       case "copyfile" -> new CopyfileBuilder(element, parent);
       default -> throw new IllegalArgumentException("unknown element name: " + name);
@@ -179,7 +184,7 @@ public sealed interface Element {
 
   record Include(@NotNull String name) implements Element {}
 
-  record SubManifest(@NotNull String path) implements Element {}
+  record SubManifest(@NotNull String name, @NotNull String manifestName, @NotNull String path, @Nullable String revision) implements Element {}
 
   record Linkfile(@NotNull String src, @NotNull String dest) implements ChildOfProject {}
 
