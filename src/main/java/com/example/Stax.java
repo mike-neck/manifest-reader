@@ -31,6 +31,9 @@ public record Stax(@NotNull Path manifestPath) {
     for (Element.Project element : manifest.projects()) {
       System.out.println(element);
     }
+    for (Submanifest submanifest : manifest.submanifests()) {
+      System.out.println(submanifest);
+    }
   }
 
   @NotNull
@@ -39,6 +42,7 @@ public record Stax(@NotNull Path manifestPath) {
     List<Element> elements = readElements(manifestPath);
     Deque<Element> deque = new ArrayDeque<>(elements);
     List<Element.Project> projects = new ArrayList<>();
+    List<Submanifest> subManifests = new ArrayList<>();
     while (!deque.isEmpty()) {
       Element element = deque.poll();
       if (element instanceof Element.Project project) {
@@ -52,11 +56,16 @@ public record Stax(@NotNull Path manifestPath) {
       } else if (element instanceof Element.RemoveProject(String name, String path)) {
         projects.removeIf(
             project ->
-                    name.equals(project.name())
-                    && (path == null || path.equals(project.path())));
+                name.equals(project.name()) && (path == null || path.equals(project.path())));
+      } else if (element instanceof Element.SubManifest subManifest) {
+        String manifestName = subManifest.manifestName();
+        Path path = manifestPath.resolveSibling(manifestName);
+        subManifests.add(
+            new Submanifest(
+                subManifest.name(), null, path, subManifest.path(), subManifest.revision()));
       }
     }
-    return new Manifest(List.copyOf(projects));
+    return new Manifest(List.copyOf(projects), List.copyOf(subManifests));
   }
 
   private static @NotNull List<Element> readElements(@NotNull Path manifestPath)
